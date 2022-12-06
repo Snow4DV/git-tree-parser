@@ -1,5 +1,7 @@
 package ru.snow4dv.GitUnits;
 
+import java.util.Arrays;
+
 public abstract class GitObject {
     private String type;
     private int length;
@@ -23,10 +25,12 @@ public abstract class GitObject {
         return plainText;
     }
 
-    public static GitObject createObject(String type, String objectPlainText) {
+    public static GitObject createObject(String type, String objectPlainText, byte[] objectByteArray) {
         switch(type) {
             case "commit":
                 return new GitCommit(objectPlainText);
+            case "tree":
+                return new GitTree(objectByteArray);
         }
         return null;
     }
@@ -36,7 +40,14 @@ public abstract class GitObject {
         String objectPlainText = new String(array);
         String type = objectPlainText.substring(0, objectPlainText.indexOf(' '));
         String gitObjectString = objectPlainText.substring(objectPlainText.indexOf('\0') + 1);
-        return GitObject.createObject(type, gitObjectString);
+        int startIndex = -1;
+        for(int i = 0; i < array.length; i++) {
+            if(array[i] == '\0') {
+                startIndex = i + 1;
+                break;
+            }
+        }
+        return GitObject.createObject(type, gitObjectString, Arrays.copyOfRange(array, startIndex, array.length));
     }
 
 }

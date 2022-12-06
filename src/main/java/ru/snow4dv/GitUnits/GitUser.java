@@ -21,7 +21,7 @@ public class GitUser {
 
     /**
      * This constructor takes the git commit string as argument
-     * Format: (author|commiter) name <email> timestamp timezone
+     * Format: name <email> timestamp timezone
      * @param gitObjectString String that was taken from the commit git object
      */
     public GitUser(String gitObjectString) {

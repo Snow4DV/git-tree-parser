@@ -13,8 +13,9 @@ public class GitRepo {
 
     private final List<GitCommit> commits = new ArrayList<>();
 
-    public GitRepo(String localRepoPath) {
+    public GitRepo(String localRepoPath) throws GitRepositoryNotFound {
         this.localRepoPath = localRepoPath;
+        initFields();
     }
 
     public byte[] readGitObject(String objectName) throws IOException {
@@ -28,11 +29,14 @@ public class GitRepo {
         File repoDirectory = Paths.get(localRepoPath, ".git/objects").toFile();
         File[] files = repoDirectory.listFiles();
         try {
-            for (File file :
+            for (File objectDirPath :
                     files) {
-                if(file.isDirectory()) {
-                    File[] objectFiles = file.listFiles();
-                    for (int i = 0; i < objectFiles.length; i++) {
+                if(objectDirPath.isDirectory()) {
+                    File[] objectFiles = objectDirPath.listFiles();
+                    for (File objectFile :
+                            objectFiles) {
+                        String objectHash = objectDirPath.getName() + objectFile.getName();
+
                     }
                 }
             }
