@@ -1,4 +1,6 @@
-package ru.snow4dv;
+package ru.snow4dv.GitUnits;
+
+import ru.snow4dv.GitRepositoryNotFound;
 
 import java.io.*;
 import java.nio.file.Paths;

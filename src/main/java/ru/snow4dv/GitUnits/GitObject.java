@@ -1,6 +1,4 @@
-package ru.snow4dv;
-
-import jdk.jshell.spi.ExecutionControl;
+package ru.snow4dv.GitUnits;
 
 public abstract class GitObject {
     private String type;

@@ -1,4 +1,4 @@
-package ru.snow4dv;
+package ru.snow4dv.GitUnits;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

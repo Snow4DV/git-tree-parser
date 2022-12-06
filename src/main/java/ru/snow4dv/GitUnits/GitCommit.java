@@ -1,9 +1,7 @@
-package ru.snow4dv;
+package ru.snow4dv.GitUnits;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class GitCommit extends GitObject {
     private GitUser author;
