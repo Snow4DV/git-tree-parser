@@ -7,6 +7,9 @@ import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.zip.InflaterInputStream;
 
 public class GitRepo {
@@ -57,5 +60,12 @@ public class GitRepo {
         } catch (IOException e) {
             throw new GitObjectNotFound(objectHash);
         }
+    }
+
+    public <T extends GitObject> List<T> getObjectsOfType(Class<T> objectClass) {
+        return objects.stream()
+                .filter(gitObject -> objectClass.isAssignableFrom(gitObject.getClass()))
+                .map(gitObject -> (T) gitObject)
+                .collect(Collectors.toList());
     }
 }

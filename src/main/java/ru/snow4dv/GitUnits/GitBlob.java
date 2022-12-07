@@ -1,6 +1,6 @@
 package ru.snow4dv.GitUnits;
 
-public class GitBlob extends GitObject {
+public class GitBlob extends GitNode {
 
 
     public GitBlob(String hash, byte[] content) {
