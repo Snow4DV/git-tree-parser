@@ -11,7 +11,7 @@ public class GitTree extends GitNode{
 
     private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
 
-    private final List<GitNode> subNodes = new ArrayList<>();
+    private final List<GitNodeLabel> subNodes = new ArrayList<>();
 
 
     /**
@@ -56,8 +56,13 @@ public class GitTree extends GitNode{
             if(currentByteIndex  == 20) { // Then entity of tree is fully-read
                 String hash = bytesToHex(hashBytes);
                 String permission = permissionSB.toString();
-                String fileName = fileNameSB.toString();
+                String nodeName = fileNameSB.toString();
 
+                if(permission.equals("40000")) { // if entity is tree
+                    subNodes.add(new GitNodeLabel(GitNodeLabel.NodeType.TREE, hash, nodeName));
+                } else {
+                    subNodes.add(new GitNodeLabel(GitNodeLabel.NodeType.BLOB, hash, nodeName));
+                }
 
                 currentObject = ReadObjectType.PERMISSION;
                 currentByteIndex = 0;

@@ -14,8 +14,6 @@ public class Main {
         byte[] obj = gitUtility.readGitObject("a72beb03ef4a6fe3a367a9e54b05392234948acc");
         GitObject object = GitObject.createObject(obj);
 
-
-        GitTree tree = new GitTree(obj);
         System.out.println(new String(obj));
     }
 }
