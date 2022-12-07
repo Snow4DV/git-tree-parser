@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class GitNodeLabel {
     enum NodeType {
-        BLOB, TREE
+        BLOB, TREE, COMMIT_TREE
     }
 
     private final NodeType nodeType;
@@ -18,6 +18,12 @@ public class GitNodeLabel {
         this.nodeName = nodeName;
     }
 
+
+    public GitNodeLabel(String hash) {
+        this.nodeType = NodeType.COMMIT_TREE;
+        this.hash = hash;
+        this.nodeName = "root";
+    }
     public NodeType getNodeType() {
         return nodeType;
     }
@@ -31,7 +37,7 @@ public class GitNodeLabel {
     }
 
     public boolean isTree() {
-        return nodeType == NodeType.TREE;
+        return nodeType != NodeType.BLOB;
     }
 
     public String getNodeName() {
@@ -41,4 +47,5 @@ public class GitNodeLabel {
     public GitObject loadGitObject(GitRepo repo) throws IOException {
         return repo.getGitObject(hash);
     }
+
 }

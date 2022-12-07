@@ -7,20 +7,26 @@ import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.InflaterInputStream;
 
 public class GitRepo {
     private String localRepoPath;
 
-    private boolean loadFilesToMemory = false;
+    private final boolean loadFiles; // TODO: implement enabling file loading
 
     private final List<GitObject> objects = new ArrayList<>();
 
     public GitRepo(String localRepoPath) throws GitRepositoryNotFound {
         this.localRepoPath = localRepoPath;
+        loadFiles = false;
+        loadRepoObjects();
+    }
+
+    public GitRepo(String localRepoPath, boolean loadFiles) throws GitRepositoryNotFound {
+        this.localRepoPath = localRepoPath;
+        this.loadFiles = loadFiles;
         loadRepoObjects();
     }
 
@@ -32,7 +38,7 @@ public class GitRepo {
 
 
     public GitObject getGitObject(String hash) throws IOException {
-        return GitObject.createObject(hash, readGitObject(hash));
+        return GitObject.createObject(hash, readGitObject(hash), loadFiles);
     }
 
     private void loadRepoObjects() throws GitRepositoryNotFound {
@@ -68,4 +74,26 @@ public class GitRepo {
                 .map(gitObject -> (T) gitObject)
                 .collect(Collectors.toList());
     }
+
+    public <T extends GitObject> Map<String, T> getMapOfCertainObjects(Class<T> objectClass) {
+        return objects.stream()
+                .filter(gitObject -> objectClass.isAssignableFrom(gitObject.getClass()))
+                .map(gitObject -> (T) gitObject)
+                .collect(Collectors.toMap(T::getHash, t -> t));
+
+    }
+
+    public GitCommit getFirstCommit() {
+        for (GitObject gitObject :
+                objects) {
+            if (gitObject instanceof GitCommit) {
+                GitCommit commit = (GitCommit) gitObject;
+                if (commit.getParentCommits().size() == 0) {
+                    return commit;
+                }
+            }
+        }
+        return null;
+    }
+
 }

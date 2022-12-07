@@ -4,14 +4,18 @@ import java.io.FileInputStream;
 import java.util.Arrays;
 
 public abstract class GitObject {
+
+    static int lastIndex = 0;
     private String type;
     private String hash;
     private byte[] content;
+    protected int index;
 
     protected GitObject(String type, String hash, byte[] content) {
         this.type = type;
         this.hash = hash;
         this.content = content;
+        this.index = lastIndex++;
     }
 
     public String getHash() {
@@ -39,10 +43,10 @@ public abstract class GitObject {
     }
 
     public static GitObject createObject(String hash, byte[] content) {
-        return GitObject.createObject(hash, content, true);
+        return GitObject.createObject(hash, content, false);
     }
 
-    public static GitObject createObject(String hash, byte[] content,  boolean skipFile) {
+    public static GitObject createObject(String hash, byte[] content,  boolean loadFiles) {
         String objectType = "";
 
         //String gitObjectString = objectPlainText.substring(objectPlainText.indexOf('\0') + 1);
@@ -57,9 +61,12 @@ public abstract class GitObject {
             }
         }
 
-        if(objectType.equals("blob") && skipFile) return null;
+        if(objectType.equals("blob") && !loadFiles) return null;
 
         return GitObject.createObject(objectType, hash, Arrays.copyOfRange(content, startIndex, content.length));
     }
 
+    public int getIndex() {
+        return index;
+    }
 }

@@ -7,7 +7,7 @@ public class GitCommit extends GitObject {
     private GitUser author;
     private GitUser committer;
     private final List<String> parentCommits = new ArrayList<>();
-    private String treeHash;
+    private GitNodeLabel treeLabel;
     private String message;
 
     private GitTimestamp authorTimestamp;
@@ -30,7 +30,7 @@ public class GitCommit extends GitObject {
             String commitParameterArgument = commitLines[i].substring(commitLines[i].indexOf(' ') + 1);
             switch(commitParameterType) {
                 case "tree":
-                    this.treeHash = commitParameterArgument;
+                    this.treeLabel = new GitNodeLabel(commitParameterArgument);
                     break;
                 case "parent":
                     this.parentCommits.add(commitParameterArgument);
@@ -69,8 +69,8 @@ public class GitCommit extends GitObject {
         return parentCommits;
     }
 
-    public String getTreeHash() {
-        return treeHash;
+    public GitNodeLabel getTreeLabel() {
+        return treeLabel;
     }
 
     public String getMessage() {

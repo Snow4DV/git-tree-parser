@@ -13,7 +13,6 @@ public class GitTree extends GitNode{
 
     private final List<GitNodeLabel> subNodes = new ArrayList<>();
 
-
     /**
      * Creates git tree object
      * @param treeContent read tree file without length and type information
@@ -79,6 +78,10 @@ public class GitTree extends GitNode{
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public List<GitNodeLabel> getSubNodes() {
+        return subNodes;
     }
 
 }
