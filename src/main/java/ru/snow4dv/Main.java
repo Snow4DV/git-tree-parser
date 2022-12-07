@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        GitRepo gitUtility = new GitRepo("c:/users/ASUS/git_repos/kisscm");
+        GitRepo gitRepo = new GitRepo("c:/users/ASUS/git_repos/kisscm");
 
 
         /*byte[] obj = gitUtility.readGitObject("a72beb03ef4a6fe3a367a9e54b05392234948acc");

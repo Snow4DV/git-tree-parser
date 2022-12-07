@@ -1,5 +1,6 @@
 package ru.snow4dv.GitUnits;
 
+import java.io.FileInputStream;
 import java.util.Arrays;
 
 public abstract class GitObject {
@@ -42,20 +43,23 @@ public abstract class GitObject {
     }
 
     public static GitObject createObject(String hash, byte[] content,  boolean skipFile) {
-        String objectPlainText = new String(content);
-        String type = objectPlainText.substring(0, objectPlainText.indexOf(' '));
+        String objectType = "";
+
         //String gitObjectString = objectPlainText.substring(objectPlainText.indexOf('\0') + 1);
         int startIndex = -1;
         for(int i = 0; i < content.length; i++) {
             if(content[i] == '\0') {
                 startIndex = i + 1;
                 break;
+            } else if(content[i] == ' '){
+                //objectDescriptionSB.append((char) content[i]);
+                objectType = new String(Arrays.copyOfRange(content, 0, i));
             }
         }
 
-        if(type.equals("blob") && skipFile) return null;
+        if(objectType.equals("blob") && skipFile) return null;
 
-        return GitObject.createObject(type, hash, Arrays.copyOfRange(content, startIndex, content.length));
+        return GitObject.createObject(objectType, hash, Arrays.copyOfRange(content, startIndex, content.length));
     }
 
 }
