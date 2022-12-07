@@ -4,50 +4,58 @@ import java.util.Arrays;
 
 public abstract class GitObject {
     private String type;
-    private int length;
-    private String plainText;
+    private String hash;
+    private byte[] content;
 
-    protected GitObject(String type, int length, String plainText) {
+    protected GitObject(String type, String hash, byte[] content) {
         this.type = type;
-        this.length = length;
-        this.plainText = plainText;
+        this.hash = hash;
+        this.content = content;
+    }
+
+    public String getHash() {
+        return hash;
     }
 
     public String getType() {
         return type;
     }
 
-    public int getLength() {
-        return length;
+    public byte[] getContent() {
+        return content;
     }
 
-    public String getPlainText() {
-        return plainText;
-    }
-
-    public static GitObject createObject(String type, String objectPlainText, byte[] objectByteArray) {
+    public static GitObject createObject(String type, String hash, byte[] objectByteArray) {
         switch(type) {
             case "commit":
-                return new GitCommit(objectPlainText);
+                return new GitCommit(hash, objectByteArray);
             case "tree":
-                return new GitTree(objectByteArray);
+                return new GitTree(hash, objectByteArray);
+            case "blob":
+                return new GitBlob(hash, objectByteArray);
         }
         return null;
     }
 
+    public static GitObject createObject(String hash, byte[] content) {
+        return GitObject.createObject(hash, content, true);
+    }
 
-    public static GitObject createObject(byte[] array) {
-        String objectPlainText = new String(array);
+    public static GitObject createObject(String hash, byte[] content,  boolean skipFile) {
+        String objectPlainText = new String(content);
         String type = objectPlainText.substring(0, objectPlainText.indexOf(' '));
-        String gitObjectString = objectPlainText.substring(objectPlainText.indexOf('\0') + 1);
+        //String gitObjectString = objectPlainText.substring(objectPlainText.indexOf('\0') + 1);
         int startIndex = -1;
-        for(int i = 0; i < array.length; i++) {
-            if(array[i] == '\0') {
+        for(int i = 0; i < content.length; i++) {
+            if(content[i] == '\0') {
                 startIndex = i + 1;
                 break;
             }
         }
-        return GitObject.createObject(type, gitObjectString, Arrays.copyOfRange(array, startIndex, array.length));
+
+        if(type.equals("blob") && skipFile) return null;
+
+        return GitObject.createObject(type, hash, Arrays.copyOfRange(content, startIndex, content.length));
     }
 
 }

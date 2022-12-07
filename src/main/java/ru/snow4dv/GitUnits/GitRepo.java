@@ -1,5 +1,6 @@
 package ru.snow4dv.GitUnits;
 
+import ru.snow4dv.GitObjectNotFound;
 import ru.snow4dv.GitRepositoryNotFound;
 
 import java.io.*;
@@ -11,11 +12,13 @@ import java.util.zip.InflaterInputStream;
 public class GitRepo {
     private String localRepoPath;
 
-    private final List<GitCommit> commits = new ArrayList<>();
+    private boolean loadFilesToMemory = false;
+
+    private final List<GitObject> objects = new ArrayList<>();
 
     public GitRepo(String localRepoPath) throws GitRepositoryNotFound {
         this.localRepoPath = localRepoPath;
-        initFields();
+        loadRepoObjects();
     }
 
     public byte[] readGitObject(String objectName) throws IOException {
@@ -25,9 +28,14 @@ public class GitRepo {
     }
 
 
-    private void initFields() throws GitRepositoryNotFound {
+    public GitObject getGitObject(String hash) throws IOException {
+        return GitObject.createObject(hash, readGitObject(hash));
+    }
+
+    private void loadRepoObjects() throws GitRepositoryNotFound {
         File repoDirectory = Paths.get(localRepoPath, ".git/objects").toFile();
         File[] files = repoDirectory.listFiles();
+        String objectHash = "NO_HASH";
         try {
             for (File objectDirPath :
                     files) {
@@ -35,13 +43,19 @@ public class GitRepo {
                     File[] objectFiles = objectDirPath.listFiles();
                     for (File objectFile :
                             objectFiles) {
-                        String objectHash = objectDirPath.getName() + objectFile.getName();
+                        objectHash = objectDirPath.getName() + objectFile.getName();
+                        GitObject gitObject = getGitObject(objectHash);
+                        if(gitObject != null) {
+                            objects.add(gitObject);
+                        }
 
                     }
                 }
             }
-        } catch(NullPointerException ex) {
+        } catch(NullPointerException e) {
             throw new GitRepositoryNotFound(localRepoPath);
+        } catch (IOException e) {
+            throw new GitObjectNotFound(objectHash);
         }
     }
 }

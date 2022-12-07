@@ -13,12 +13,10 @@ public class GitCommit extends GitObject {
     private GitTimestamp authorTimestamp;
     private GitTimestamp committerTimestamp;
 
-    /**
-     * Full commit in plain text (without type-length description)
-     * @param commitPlainText Text content of commit object
-     */
-    protected GitCommit(String commitPlainText) {
-        super("commit", commitPlainText.length(), commitPlainText);
+    protected GitCommit(String hash, byte[] commitData) {
+        super("commit",  hash, commitData);
+        String commitPlainText = new String(commitData);
+
         String[] commitLines = commitPlainText.split("\n");
 
         int commitMessageStartIndex = 0;

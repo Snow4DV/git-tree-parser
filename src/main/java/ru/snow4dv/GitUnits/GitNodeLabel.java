@@ -1,5 +1,7 @@
 package ru.snow4dv.GitUnits;
 
+import java.io.IOException;
+
 public class GitNodeLabel {
     enum NodeType {
         BLOB, TREE
@@ -34,5 +36,9 @@ public class GitNodeLabel {
 
     public String getNodeName() {
         return nodeName;
+    }
+
+    public GitObject loadGitObject(GitRepo repo) throws IOException {
+        return repo.getGitObject(hash);
     }
 }

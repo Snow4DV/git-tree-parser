@@ -16,10 +16,10 @@ public class GitTree extends GitNode{
 
     /**
      * Creates git tree object
-     * @param treeFile read tree file without length and type information
+     * @param treeContent read tree file without length and type information
      */
-    public GitTree(byte[] treeFile) {
-        super("tree", treeFile.length, new String(treeFile));
+    public GitTree(String hash, byte[] treeContent) {
+        super("tree", hash, treeContent);
 
         StringBuilder permissionSB = new StringBuilder(), fileNameSB = new StringBuilder();
 
@@ -28,8 +28,8 @@ public class GitTree extends GitNode{
 
         ReadObjectType currentObject = ReadObjectType.PERMISSION;
 
-        for (int i = 0; i < treeFile.length; i++) {
-            char currentChar = (char) treeFile[i];
+        for (int i = 0; i < treeContent.length; i++) {
+            char currentChar = (char) treeContent[i];
 
             if(currentChar == ' ' && currentObject == ReadObjectType.PERMISSION) {
                 currentObject = ReadObjectType.FILE_NAME;
@@ -49,19 +49,19 @@ public class GitTree extends GitNode{
                     fileNameSB.append(currentChar);
                     break;
                 case HASH:
-                    hashBytes[currentByteIndex++] = treeFile[i];
+                    hashBytes[currentByteIndex++] = treeContent[i];
                     break;
             }
 
             if(currentByteIndex  == 20) { // Then entity of tree is fully-read
-                String hash = bytesToHex(hashBytes);
-                String permission = permissionSB.toString();
-                String nodeName = fileNameSB.toString();
+                String subNodeHash = bytesToHex(hashBytes);
+                String subNodePermissions = permissionSB.toString();
+                String subNodeName = fileNameSB.toString();
 
-                if(permission.equals("40000")) { // if entity is tree
-                    subNodes.add(new GitNodeLabel(GitNodeLabel.NodeType.TREE, hash, nodeName));
+                if(subNodePermissions.equals("40000")) { // if entity is tree
+                    subNodes.add(new GitNodeLabel(GitNodeLabel.NodeType.TREE, subNodeHash, subNodeName));
                 } else {
-                    subNodes.add(new GitNodeLabel(GitNodeLabel.NodeType.BLOB, hash, nodeName));
+                    subNodes.add(new GitNodeLabel(GitNodeLabel.NodeType.BLOB, subNodeHash, subNodeName));
                 }
 
                 currentObject = ReadObjectType.PERMISSION;
